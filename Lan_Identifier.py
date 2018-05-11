@@ -100,11 +100,6 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(df2['text'], df2['language'],
                                                         test_size=0.2, #Use 80% of the data for training
                                                         random_state = 123)
-    # count_vect = CountVectorizer()
-    # X_train_counts = count_vect.fit_transform(X_train) # Calculate mean and standard deviation and Convert strings to
-                                                           # vectors as all models require numerical input and centre data
-    # evaluate_Models(X_train_counts,y_train)                    # This function was used to evaluate different classification algorithms
-    # X_test_counts = count_vect.transform(X_test)                 # Centre data and convert strings of testing data x
 
     # Apply the multinomial naive bayes algorith to the training data
     pipe = make_pipeline(CountVectorizer(), MultinomialNB())
