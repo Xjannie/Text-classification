@@ -55,7 +55,8 @@ def main():
 
     y_pred = pipe.predict(X_test)
     class_report = classification_report(y_test, y_pred)
-    print(class_report)
+    Con_matrix = pd.crosstab(y_test, y_pred)
+    print('Classification report: {},Confusion Matrix {}'.format(class_report, Con_matrix))
     print('Accuracy Score: {}'.format(accuracy_score(y_test, y_pred, normalize=True, sample_weight=None)))
 
 main()

@@ -1,0 +1,4 @@
+matplotlib==2.2.2
+pandas==0.20.1
+joblib==0.11
+scikit_learn==0.19.1

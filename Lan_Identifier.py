@@ -1,10 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import string
-import pickle
 import joblib
 from sklearn.metrics import classification_report
-from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
@@ -16,6 +14,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.utils import resample
 from sklearn.pipeline import make_pipeline
+from sklearn.metrics import accuracy_score
 
 def text_Cleaner(Filename):
     df = pd.read_csv("lang_data.csv")
@@ -48,6 +47,8 @@ def evaluate_Models(x,y):
     models.append(('RFC', RandomForestClassifier()))
     models.append(('G NB', GaussianNB()))
     models.append(('Mul NB', MultinomialNB()))
+    count_vect = CountVectorizer()
+    x = count_vect.fit_transform(x).toarray()
 
     # evaluate each model in turn
     seed = 10 # Random state seed to use
@@ -70,6 +71,7 @@ def evaluate_Models(x,y):
     ax = fig.add_subplot(111)
     plt.boxplot(results)
     ax.set_xticklabels(names)
+    ax.set_ylabel('Accuracy')
     plt.show()
 
 def re_sample(df):
@@ -96,24 +98,27 @@ def main():
 
     #Up sample the undersampled "Nederlands" Class
     df2 = re_sample(df)
+    evaluate_Models(df2['text'], df2['language'])
     #Split data into test and train data
     X_train, X_test, y_train, y_test = train_test_split(df2['text'], df2['language'],
                                                         test_size=0.2, #Use 80% of the data for training
                                                         random_state = 123)
 
     # Apply the multinomial naive bayes algorith to the training data
-    pipe = make_pipeline(CountVectorizer(), MultinomialNB())
+
+    pipe = make_pipeline(CountVectorizer(), MultinomialNB(alpha=0, class_prior=None, fit_prior=True))
     pipe.fit(X_train, y_train)
-    # clf = MultinomialNB().fit(X_train_counts, y_train)
+
     # Save predictions obtained
     y_pred = pipe.predict(X_test)
     # Do data analysis in form of classification report and confusion matrix
+
     class_report = classification_report(y_test, y_pred)
     Con_matrix = pd.crosstab(y_test, y_pred)
     # Con_matrix = confusion_matrix(y_test, y_pred,labels=['English','Afrikaans','Nederlands'])
 
     print ('Classification report: {},Confusion Matrix {}'.format(class_report,Con_matrix))
-    print('Score: {}'.format(pipe.score(X_test, y_test)))
+    print('Score: {}'.format(accuracy_score(y_test, y_pred, normalize=True, sample_weight=None)))
     # print(clf.predict(count_vect.transform(["dat gaat dus weer als vanzelf"])))
 
     # Save the trained program to a file that can be used later on for applying the model
