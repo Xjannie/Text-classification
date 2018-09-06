@@ -1,3 +1,1 @@
-This project was done as part of an interview process. 
-
-The goal was to classify phrases as either "Afrikaans", "English" or "Nederlands".
+The goal of this project was to classify phrases as either "Afrikaans", "English" or "Nederlands".
